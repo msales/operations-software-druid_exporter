@@ -40,6 +40,8 @@ class DruidCollector(object):
             'broker': {
                 'query/time': ['dataSource'],
                 'query/bytes': ['dataSource'],
+                'query/segment/time': None,
+                'query/wait/time': None,
                 'query/cache/total/numEntries': None,
                 'query/cache/total/sizeBytes': None,
                 'query/cache/total/hits': None,
@@ -51,6 +53,8 @@ class DruidCollector(object):
             'historical': {
                 'query/time': ['dataSource'],
                 'query/bytes': ['dataSource'],
+                'query/segment/time': None,
+                'query/wait/time': None,
                 'query/cache/total/numEntries': None,
                 'query/cache/total/sizeBytes': None,
                 'query/cache/total/hits': None,
@@ -81,6 +85,8 @@ class DruidCollector(object):
             'peon': {
                 'query/time': ['dataSource'],
                 'query/bytes': ['dataSource'],
+                'query/segment/time': None,
+                'query/wait/time': None,
                 'ingest/events/thrownAway': ['dataSource'],
                 'ingest/events/unparseable': ['dataSource'],
                 'ingest/events/processed': ['dataSource'],
@@ -98,6 +104,8 @@ class DruidCollector(object):
         self.metric_buckets = {
             'query/time': ['10', '100', '500', '1000', '10000', 'inf', 'sum'],
             'query/bytes': ['10', '100', '500', '1000', '10000', 'inf', 'sum'],
+            'query/segment/time': ['10', '100', '500', '1000', '10000', 'inf', 'sum'],
+            'query/wait/time': ['10', '100', '500', '1000', '10000', 'inf', 'sum'],
         }
 
         # Data structure holding histogram data
@@ -106,6 +114,8 @@ class DruidCollector(object):
         self.histograms_metrics = set([
             'query/time',
             'query/bytes',
+            'query/segment/time',
+            'query/wait/time',
         ])
 
         # Data structure holding counters data
@@ -200,6 +210,12 @@ class DruidCollector(object):
                'druid_' + daemon + '_query_bytes',
                'Number of bytes returned in query response.',
                labels=['datasource']),
+           'query/segment/time': HistogramMetricFamily(
+               'druid_' + daemon + '_query_segment_time_ms',
+               'Milliseconds taken to query individual segment. Includes time to page in the segment from disk.'),
+           'query/segment/time': HistogramMetricFamily(
+               'druid_' + daemon + '_query_wait_time_ms',
+               'Milliseconds spent waiting for a segment to be scanned.'),
         }
 
     def _get_cache_counters(self, daemon):
