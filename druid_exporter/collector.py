@@ -213,7 +213,7 @@ class DruidCollector(object):
            'query/segment/time': HistogramMetricFamily(
                'druid_' + daemon + '_query_segment_time_ms',
                'Milliseconds taken to query individual segment. Includes time to page in the segment from disk.'),
-           'query/segment/time': HistogramMetricFamily(
+           'query/wait/time': HistogramMetricFamily(
                'druid_' + daemon + '_query_wait_time_ms',
                'Milliseconds spent waiting for a segment to be scanned.'),
         }
